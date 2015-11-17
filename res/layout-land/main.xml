@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+<ru.mydroid.SquareLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:id="@+id/view" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/table_for_insert_buttons">
+    </TableLayout>
+</ru.mydroid.SquareLayout>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_restart"
+            android:id="@+id/button_restart"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            style="@style/manage_buttons_style" android:layout_alignParentRight="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textview_steps"
+            android:textSize = "60sp"
+            android:text = "@string/text_step"
+            android:visibility="invisible"
+            android:textColor="#98690d"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentTop="true" android:layout_alignParentRight="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_settings"
+            android:id="@+id/button_settings"
+            android:onClick="showSettingsDialog"
+            style="@style/manage_buttons_style"
+            android:layout_marginBottom="10dp"
+            android:layout_above="@+id/button_restart" android:layout_alignLeft="@+id/button_restart"
+            android:layout_alignRight="@+id/button_restart"/>
+</RelativeLayout>

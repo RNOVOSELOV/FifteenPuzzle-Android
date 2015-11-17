@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name"> Пятнашки </string>
+    <string name="button_restart"> Новая игра </string>
+    <string name="text_step">"Ход: "</string>
+    <string name="button_settings">Настройки</string>
+    <string name="string_win">Победа!</string>
+    <string name="string_win_message">У нас новый чемпион!\nКоличество ходов: %1$s</string>
+    <string name="string_dialog">Введите размерность поля</string>
+</resources>
