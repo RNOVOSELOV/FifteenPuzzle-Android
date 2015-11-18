@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.*;
@@ -18,11 +19,13 @@ public class FifteenActivity extends Activity {
     private static final String EMPTY_Y = "EMPTY_SPACE_Y";
     private static final String COUNT_STEPS = "COUNT_STEPS";
     private static final String BUTTONS_LABELS = "BUTTONS_LABELS";
+    private static final String LOG = "LOG";
     private int SIZE;
     private SquareButton[][] buttons;
     private Coordinate emptySpace;
     private OnClickListener buttonListener;
     private int countSteps;
+    boolean isPrevButtonCycleClosed;
 //    private int numberOfRestarts = 0;
 
     Button btnRestart;
@@ -37,50 +40,67 @@ public class FifteenActivity extends Activity {
         buttons = new SquareButton[SIZE][SIZE];
         emptySpace = new Coordinate();
         countSteps = 0;
+        isPrevButtonCycleClosed = true;
 
         buttonListener = new OnClickListener() {
             public void onClick(View myView) {
-                SquareButton clickedButton = (SquareButton) myView;
-                Coordinate clickedPoint = clickedButton.coordinate;
-                if (clickedPoint != null && canMove(clickedPoint)) {
-                    clickedButton.setVisibility(View.INVISIBLE);
-                    String numberStr = clickedButton.getText().toString();
-                    clickedButton.setText("");
+                if (isPrevButtonCycleClosed) {
+                    isPrevButtonCycleClosed = false;
+                    SquareButton clickedButton = (SquareButton) myView;
+                    Coordinate clickedPoint = clickedButton.coordinate;
+                    if (clickedPoint != null && canMove(clickedPoint)) {
+                        clickedButton.setVisibility(View.INVISIBLE);
+                        String numberStr = clickedButton.getText().toString();
+                        SquareButton button = buttons[emptySpace.x][emptySpace.y];
 
-                    SquareButton button = buttons[emptySpace.x][emptySpace.y];
-                    button.setVisibility(View.VISIBLE);
-                    button.setText(numberStr);
-                    if (Integer.valueOf(numberStr) == ((emptySpace.x * SIZE) + emptySpace.y + 1)) {
-                        button.setBackgroundResource(R.drawable.button_correct_position);
-                    } else {
-                        button.setBackgroundResource(R.drawable.button_non_correct_position);
+                        Log.d(LOG, ":");
+                        Log.d(LOG, "\n\nBefore:");
+                        Log.d(LOG, "Clicked - x: " + String.valueOf(clickedPoint.x) + " ; y: " + clickedPoint.y + " value: " + clickedButton.getText());
+                        Log.d(LOG, "button  - x: " + String.valueOf(button.coordinate.x) + " ; y: " + button.coordinate.y + " value: " + button.getText());
+                        Log.d(LOG, "Empty   - x: " + String.valueOf(emptySpace.x) + " ; y: " + emptySpace.y);
+
+                        clickedButton.setText("");
+                        button.setVisibility(View.VISIBLE);
+                        button.setText(numberStr);
+                        if (Integer.valueOf(numberStr) == ((emptySpace.x * SIZE) + emptySpace.y + 1)) {
+                            button.setBackgroundResource(R.drawable.button_correct_position);
+                        } else {
+                            button.setBackgroundResource(R.drawable.button_non_correct_position);
+                        }
+
+                        emptySpace.x = clickedPoint.x;
+                        emptySpace.y = clickedPoint.y;
+                        countSteps++;
+                        tvSteps.setVisibility(View.VISIBLE);
+                        tvSteps.setText(getString(R.string.text_step) + countSteps);
+
+                        Log.d(LOG, "\nAfter:");
+                        Log.d(LOG, "Clicked - x: " + String.valueOf(clickedPoint.x) + " ; y: " + clickedPoint.y + " value: " + clickedButton.getText());
+                        Log.d(LOG, "button  - x: " + String.valueOf(button.coordinate.x) + " ; y: " + button.coordinate.y + " value: " + button.getText());
+                        Log.d(LOG, "Empty   - x: " + String.valueOf(emptySpace.x) + " ; y: " + emptySpace.y);
+
+                        if (checkWin()) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(FifteenActivity.this);
+                            builder.setTitle(R.string.string_win);
+                            builder.setIcon(android.R.drawable.ic_dialog_info);
+
+                            String msg = getString(R.string.string_win_message);
+                            String substitutedString = String.format(msg, String.valueOf(countSteps));
+
+                            builder.setMessage(substitutedString);
+                            builder.setPositiveButton(R.string.string_positive_button, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            AlertDialog d = builder.create();
+                            d.show();
+                            countSteps = 0;
+                            mix();
+                        }
                     }
-
-                    emptySpace.x = clickedPoint.x;
-                    emptySpace.y = clickedPoint.y;
-                    countSteps++;
-                    tvSteps.setVisibility(View.VISIBLE);
-                    tvSteps.setText(getString(R.string.text_step) + countSteps);
-                    if (checkWin()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(FifteenActivity.this);
-                        builder.setTitle(R.string.string_win);
-                        builder.setIcon(android.R.drawable.ic_dialog_info);
-
-                        String msg = getString(R.string.string_win_message);
-                        String substitutedString = String.format(msg, String.valueOf(countSteps));
-
-                        builder.setMessage(substitutedString);
-                        builder.setPositiveButton(R.string.string_positive_button, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                        AlertDialog d = builder.create();
-                        d.show();
-                        countSteps = 0;
-                        mix();
-                    }
+                    isPrevButtonCycleClosed = true;
                 }
             }
         };
